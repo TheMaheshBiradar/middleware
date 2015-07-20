@@ -8,6 +8,7 @@
 			<element name="employeeId" type="string" />
 			<element name="password" type="string" />
 			<element name="designation" type="string" />
+			<element name="dateOfJoining" type="date" />
 		</sequence>
 		<attribute name="type">
 			<simpleType>
