@@ -1,0 +1,64 @@
+Without WebService
+
+
+Mar 17, 2015 8:47:46 AM com.taggy.quickstart.TimeServerPublisher main
+INFO: Starting the Server....
+Exception in thread "main" java.lang.IllegalArgumentException: 
+class com.taggy.quickstart.TimeServerImpl has neither @WebService nor @WebServiceProvider annotation
+	at com.sun.xml.internal.ws.server.EndpointFactory.verifyImplementorClass(EndpointFactory.java:424)
+	at com.sun.xml.internal.ws.transport.http.server.EndpointImpl.getPrimaryWsdl(EndpointImpl.java:367)
+	at com.sun.xml.internal.ws.transport.http.server.EndpointImpl.createEndpoint(EndpointImpl.java:315)
+	at com.sun.xml.internal.ws.transport.http.server.EndpointImpl.publish(EndpointImpl.java:231)
+	at com.sun.xml.internal.ws.spi.ProviderImpl.createAndPublishEndpoint(ProviderImpl.java:121)
+	at javax.xml.ws.Endpoint.publish(Endpoint.java:240)
+	at com.taggy.quickstart.TimeServerPublisher.main(TimeServerPublisher.java:21)
+==============================================================================================
+
+
+Difference Between @WebService nor @WebServiceProvider
+
+
+==============================
+Avoiding a Subtle Problem in the Web Service Implementation
+This example departs from the all-too-common practice of having the service’s SIB (the
+class TimeServerImpl) connected to the SEI (the interface TimeServer) only through the
+endpointInterface attribute in the @WebService annotation. It is not unusual to see this:
+@WebService(endpointInterface = "ch01.ts.TimeServer")
+public class TimeServerImpl { // implements TimeServer removed
+The style is popular but unsafe. It is far better to have the implements clause so that the
+compiler checks whether the SIB implements the methods declared in the SEI. Remove
+the implements clause and comment out the definitions of the two web service
+operations:
+@WebService(endpointInterface = "ch01.ts.TimeServer")
+public class TimeServerImpl {
+// public String getTimeAsString() { return new Date().toString(); }
+// public long gettimeAsElapsed() { return new Date().getTime(); }
+}
+The code still compiles. With the implements clause in place, the compiler issues a fatal
+error because the SIB fails to define the methods declared in the SEI.
+
+
+eRROR
+
+Mar 17, 2015 8:59:17 AM com.taggy.quickstart.TimeServerPublisher main
+INFO: Starting the Server....
+Exception in thread "main" com.sun.xml.internal.ws.model.RuntimeModelerException: method: getTimeAsString could not be found on class: com.taggy.quickstart.TimeServerImpl
+	at com.sun.xml.internal.ws.model.RuntimeModeler.processMethod(RuntimeModeler.java:641)
+	at com.sun.xml.internal.ws.model.RuntimeModeler.processClass(RuntimeModeler.java:475)
+	at com.sun.xml.internal.ws.model.RuntimeModeler.buildRuntimeModel(RuntimeModeler.java:305)
+	at com.sun.xml.internal.ws.db.DatabindingImpl.<init>(DatabindingImpl.java:85)
+	at com.sun.xml.internal.ws.db.DatabindingProviderImpl.create(DatabindingProviderImpl.java:59)
+	at com.sun.xml.internal.ws.db.DatabindingProviderImpl.create(DatabindingProviderImpl.java:43)
+	at com.sun.xml.internal.ws.db.DatabindingFactoryImpl.createRuntime(DatabindingFactoryImpl.java:105)
+	at com.sun.xml.internal.ws.server.EndpointFactory.createSEIModel(EndpointFactory.java:453)
+	at com.sun.xml.internal.ws.server.EndpointFactory.create(EndpointFactory.java:269)
+	at com.sun.xml.internal.ws.server.EndpointFactory.createEndpoint(EndpointFactory.java:144)
+	at com.sun.xml.internal.ws.api.server.WSEndpoint.create(WSEndpoint.java:563)
+	at com.sun.xml.internal.ws.api.server.WSEndpoint.create(WSEndpoint.java:545)
+	at com.sun.xml.internal.ws.transport.http.server.EndpointImpl.createEndpoint(EndpointImpl.java:308)
+	at com.sun.xml.internal.ws.transport.http.server.EndpointImpl.publish(EndpointImpl.java:231)
+	at com.sun.xml.internal.ws.spi.ProviderImpl.createAndPublishEndpoint(ProviderImpl.java:121)
+	at javax.xml.ws.Endpoint.publish(Endpoint.java:240)
+	at com.taggy.quickstart.TimeServerPublisher.main(TimeServerPublisher.java:21)
+
+===================================================================================================
