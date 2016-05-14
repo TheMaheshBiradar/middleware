@@ -16,6 +16,7 @@ public class TimeServerImpl implements TimeServer {
 
 	public String getTimeAsString() {
 		return new Date().toString();
+		 
 	}
 
 	public long getTimeAsElapsed() {
